@@ -159,6 +159,8 @@ document.addEventListener('keydown', (e) => {
 
 // ---------- Helpers de validación de campos ----------
 function marcarError(input, mensajeError) {
+  input.classList.remove('invalid');
+  void input.offsetWidth; // fuerza a reiniciar la animación si el error ya estaba marcado
   input.classList.add('invalid');
   const errorSpan = document.getElementById(`${input.id}-error`);
   if (errorSpan) errorSpan.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i>${mensajeError}`;
@@ -286,6 +288,9 @@ simulatorForm.addEventListener('submit', function (event) {
   `.replace(/\s+/g, ' ').trim();
 
   simulatorResult.innerHTML = resultadoHTML;
+  simulatorResult.classList.remove('result-pop');
+  void simulatorResult.offsetWidth; // reinicia la animación si se envía varias veces
+  simulatorResult.classList.add('result-pop');
 });
 
 simulatorForm.addEventListener('reset', () => {
@@ -433,4 +438,55 @@ quizForm.addEventListener('reset', () => {
     span.innerHTML = '';
     span.className = 'field-error';
   });
+});
+
+// ============================================================
+// ANIMACIONES: revelado progresivo al hacer scroll
+// No toca el HTML: agrega las clases por JS sobre selectores
+// que ya existen, así que nada de lo anterior se rompe.
+// ============================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+  const revealSelectors = [
+    '#definicion .col-text',
+    '#definicion .col-quote',
+    '#elementos .diagram-wrap',
+    '#elementos .section-lead',
+    '#elementos .table-wrap',
+    '#fuentes .col-video',
+    '#fuentes .col-book',
+  ];
+  revealSelectors.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((el) => el.classList.add('reveal'));
+  });
+
+  const staggerSelectors = [
+    '.cards-grid',
+    '.fact-row',
+    '.activity-grid',
+    '.footer-inner',
+    '.quote-tags',
+  ];
+  staggerSelectors.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((el) => el.classList.add('reveal-stagger'));
+  });
+
+  const animatedEls = document.querySelectorAll('.reveal, .reveal-stagger');
+
+  if (animatedEls.length && 'IntersectionObserver' in window) {
+    const revealObserver = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -60px 0px' }
+    );
+    animatedEls.forEach((el) => revealObserver.observe(el));
+  } else {
+    animatedEls.forEach((el) => el.classList.add('is-visible'));
+  }
 });

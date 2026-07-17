@@ -270,17 +270,45 @@ a {
 }
 
 h2 {
-  display: inline-block;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
   font-size: clamp(1.7rem, 3vw, 2.3rem);
-  margin: 0 0 24px;
+  margin: 0 0 36px;
   font-weight: 600;
-  padding-bottom: 10px;
-  border-bottom: 5px solid var(--coral);
-  border-radius: 3px;
+}
+h2::before {
+  content: '';
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  background: var(--coral);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  transform: rotate(14deg);
+  box-shadow: 3px 3px 0 rgba(43, 33, 64, 0.25);
+}
+h2::after {
+  content: '';
+  position: absolute;
+  left: 32px;
+  right: -4px;
+  bottom: -12px;
+  height: 5px;
+  border-radius: 4px;
+  background: var(--coral);
 }
 h2.light {
   color: #fff;
-  border-bottom-color: var(--sun);
+}
+h2.light::before {
+  background: var(--sun);
+  border-color: var(--sun);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+}
+h2.light::after {
+  background: var(--sun);
 }
 .section-lead {
   color: var(--slate);
@@ -503,6 +531,115 @@ h2.light {
   padding: 14px 18px;
   font-weight: 600;
   font-size: 0.98rem;
+}
+
+/* TABLA DE ELEMENTOS */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.table-wrap {
+  margin-top: 40px;
+  border: 3px solid var(--sun);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
+}
+.elements-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--ink-2);
+}
+.elements-table caption {
+  caption-side: top;
+  text-align: left;
+  padding: 16px 20px 4px;
+  color: #d9cff0;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.elements-table thead th {
+  background: var(--sun);
+  color: var(--ink);
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+}
+.elements-table tbody td {
+  padding: 14px 16px;
+  color: #e8dff5;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  vertical-align: middle;
+}
+.elements-table tbody td strong {
+  color: #fff;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 500;
+}
+.elements-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.04);
+}
+.elements-table tbody tr {
+  transition: background 0.2s;
+}
+.elements-table tbody tr:hover {
+  background: rgba(255, 201, 60, 0.1);
+}
+.table-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 0.9rem;
+  border: 2px solid #fff;
+}
+.table-icon-coral { background: var(--coral); }
+.table-icon-sun   { background: var(--sun); color: var(--ink); border-color: var(--ink); }
+.table-icon-sky   { background: var(--sky); }
+.table-icon-grass { background: var(--grass); }
+.table-icon-plum  { background: var(--plum); }
+
+@media (max-width: 700px) {
+  .elements-table thead { display: none; }
+  .elements-table, .elements-table tbody, .elements-table tr, .elements-table td {
+    display: block;
+    width: 100%;
+  }
+  .elements-table tbody tr {
+    padding: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .elements-table tbody td {
+    border: none;
+    padding: 4px 0;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .elements-table tbody td[data-label]::before {
+    content: attr(data-label) ':';
+    flex-shrink: 0;
+    width: 90px;
+    color: var(--sun);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .elements-table tbody td[data-label="Ícono"]::before { content: ''; width: 0; }
 }
 
 /* FUENTES: video + libro de PDFs */
@@ -1160,11 +1297,193 @@ h2.light {
   }
 }
 
+/* ============================================================
+   ANIMACIONES
+   ============================================================ */
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  50%      { transform: translateY(-6px) rotate(-1.5deg); }
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-2deg); }
+  50%      { transform: rotate(2deg); }
+}
+@keyframes pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+@keyframes resultPop {
+  0%   { opacity: 0; transform: translateY(10px) scale(.97); }
+  60%  { opacity: 1; transform: translateY(-2px) scale(1.02); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes fieldShake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-5px); }
+  40%      { transform: translateX(5px); }
+  60%      { transform: translateX(-3px); }
+  80%      { transform: translateX(3px); }
+}
+@keyframes correctPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.025); }
+  100% { transform: scale(1); }
+}
+@keyframes modalIconPop {
+  from { opacity: 0; transform: scale(.4) rotate(-14deg); }
+  to   { opacity: 1; transform: scale(1) rotate(0); }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 5px 0 #b8402d, 0 0 0 0 rgba(255, 111, 89, 0.5); }
+  50%      { box-shadow: 0 5px 0 #b8402d, 0 0 0 9px rgba(255, 111, 89, 0); }
+}
+
+/* --- Entrada del hero, en cascada --- */
+.hero-content .eyebrow,
+.hero-content h1,
+.hero-content .hero-sub,
+.hero-content .scroll-cue,
+.hero-content .hero-dots {
+  opacity: 0;
+  animation: fadeInUp .8s ease forwards;
+}
+.hero-content .eyebrow    { animation-delay: .05s; }
+.hero-content h1          { animation-delay: .2s; }
+.hero-content .hero-sub   { animation-delay: .38s; }
+.hero-content .scroll-cue { animation-delay: .55s; }
+.hero-content .hero-dots  { animation-delay: .7s; }
+.hero-content .eyebrow {
+  animation: fadeInUp .8s ease forwards .05s, floatSlow 4s ease-in-out infinite 1s;
+}
+
+/* Logo del header con vida propia */
+.brand-logo { transition: transform .4s ease; }
+.brand:hover .brand-logo { transform: rotate(-10deg) scale(1.1); }
+
+/* Subrayado animado en la nav activa */
+.main-nav a { position: relative; }
+.main-nav a.active::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -3px;
+  height: 3px;
+  background: var(--sun);
+  transform-origin: left;
+  animation: fadeInUp .25s ease;
+}
+
+/* --- Revelado progresivo al hacer scroll --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .55s ease, transform .55s ease;
+}
+.reveal-stagger.is-visible > * { opacity: 1; transform: translateY(0); }
+.reveal-stagger.is-visible > *:nth-child(1) { transition-delay: .05s; }
+.reveal-stagger.is-visible > *:nth-child(2) { transition-delay: .14s; }
+.reveal-stagger.is-visible > *:nth-child(3) { transition-delay: .23s; }
+.reveal-stagger.is-visible > *:nth-child(4) { transition-delay: .32s; }
+.reveal-stagger.is-visible > *:nth-child(5) { transition-delay: .41s; }
+.reveal-stagger.is-visible > *:nth-child(6) { transition-delay: .5s; }
+
+/* --- Micro-interacciones al pasar el cursor --- */
+.card:hover .card-icon-badge { animation: wiggle .5s ease; }
+.card-img { transition: transform .35s ease; }
+.card:hover .card-img { transform: scale(1.06); }
+
+.tag { transition: transform .2s ease; }
+.tag:hover { transform: translateY(-3px) scale(1.05); }
+
+.fact-icon { transition: transform .3s ease; }
+.fact:hover .fact-icon { animation: pop .4s ease; }
+
+.book { transition: transform .3s ease; }
+.book:hover { transform: translateY(-5px) rotate(-0.4deg); }
+
+.video-wrap { transition: transform .3s ease; }
+.video-wrap:hover { transform: translateY(-4px); }
+
+.tech-badge { transition: transform .25s ease, background .25s ease; }
+.tech-badge:hover { transform: translateY(-3px) scale(1.03); background: rgba(255, 255, 255, 0.14); }
+
+.hero-dot { transition: opacity .2s, background .2s, transform .2s; }
+.hero-dot:hover { transform: scale(1.2); }
+
+.book-tab { transition: background .15s, color .15s, transform .15s; }
+.book-tab:hover { transform: translateY(-2px); }
+
+/* --- Botones --- */
+.btn-primary:active, .btn-clear:active { transform: translateY(4px); }
+#quiz-start { animation: pulseGlow 2.2s ease-in-out infinite; }
+
+/* --- Resultado del simulador: aparece con un pequeño rebote --- */
+.result-pop { animation: resultPop .45s ease; }
+
+/* --- Feedback de campos inválidos: un pequeño sacudón --- */
+.field-shake { animation: fieldShake .4s ease; }
+.panel input.invalid, .panel select.invalid { animation: fieldShake .4s ease; }
+
+/* --- Quiz: feedback animado por pregunta --- */
+.quiz-options.correct { animation: correctPop .4s ease; }
+.quiz-options.incorrect { animation: fieldShake .45s ease; }
+
+/* El cuerpo del quiz aparece con una transición suave al desbloquearse */
+.quiz-body { transition: opacity .4s ease, filter .4s ease; }
+
+/* --- Modal: entrada escalonada de ícono, título, cuerpo y botón --- */
+.modal-overlay.open .modal-icon {
+  animation: modalIconPop .45s cubic-bezier(.34, 1.56, .64, 1) .12s both;
+}
+.modal-overlay.open .modal-box h3 {
+  animation: fadeInUp .4s ease .22s both;
+}
+.modal-overlay.open .modal-body {
+  animation: fadeInUp .4s ease .3s both;
+}
+.modal-overlay.open .modal-action {
+  animation: fadeInUp .4s ease .38s both;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+  html { scroll-behavior: auto; }
+  .pulse animateMotion { display: none; }
+
+  .hero-content .eyebrow,
+  .hero-content h1,
+  .hero-content .hero-sub,
+  .hero-content .scroll-cue,
+  .hero-content .hero-dots,
+  .main-nav a.active::after,
+  #quiz-start,
+  .result-pop,
+  .field-shake,
+  .panel input.invalid,
+  .panel select.invalid,
+  .quiz-options.correct,
+  .quiz-options.incorrect,
+  .modal-overlay.open .modal-icon,
+  .modal-overlay.open .modal-box h3,
+  .modal-overlay.open .modal-body,
+  .modal-overlay.open .modal-action {
+    animation: none !important;
   }
-  .pulse animateMotion {
-    display: none;
+  .reveal,
+  .reveal-stagger > * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }

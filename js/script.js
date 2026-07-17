@@ -1,492 +1,755 @@
-// ---------- Libro de PDFs: cambiar de documento en el visor ----------
-const pdfViewer = document.getElementById('pdfViewer');
-const bookTabs = document.querySelectorAll('.book-tab');
+// 1) VISOR DE PDF 
+var visorPdf = document.getElementById("visorPdf");
+var botonesPestana = document.querySelectorAll(".pestana-libro");
 
-bookTabs.forEach((tab) => {
-  tab.addEventListener('click', () => {
-    if (!pdfViewer) return;
-    pdfViewer.src = tab.dataset.pdf;
-    bookTabs.forEach((t) => t.classList.remove('active'));
-    tab.classList.add('active');
-  });
-});
-
-// ---------- Navbar: resaltar la sección activa mientras se hace scroll ----------
-const navLinks = document.querySelectorAll('#mainNav a[data-section]');
-const trackedSections = document.querySelectorAll('main section[id]');
-
-if (navLinks.length && trackedSections.length) {
-  const headerHeight = document.querySelector('.site-header').offsetHeight;
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const id = entry.target.getAttribute('id');
-          navLinks.forEach((link) => {
-            link.classList.toggle('active', link.dataset.section === id);
-          });
-        }
-      });
-    },
-    {
-      rootMargin: `-${headerHeight + 10}px 0px -60% 0px`,
-      threshold: 0,
+for (var i = 0; i < botonesPestana.length; i++) {
+  botonesPestana[i].addEventListener("click", function () {
+    var archivoPdf = this.getAttribute("data-pdf");
+    if (visorPdf) {
+      visorPdf.src = archivoPdf;
     }
-  );
-
-  trackedSections.forEach((section) => observer.observe(section));
+    for (var j = 0; j < botonesPestana.length; j++) {
+      botonesPestana[j].classList.remove("activa");
+    }
+    this.classList.add("activa");
+  });
 }
 
-// ---------- Carrusel de imágenes de fondo (hero) ----------
-const slides = document.querySelectorAll('.hero-slide');
-const dots = document.querySelectorAll('.hero-dot');
-let currentSlide = 0;
-let carouselTimer;
+// MENU DE NAVEGACION
+var enlacesMenu = document.querySelectorAll("#menuPrincipal a[data-seccion]");
+var secciones = document.querySelectorAll("main section[id]");
 
-function irASlide(index) {
-  slides[currentSlide].classList.remove('active');
-  dots[currentSlide].classList.remove('active');
-  currentSlide = index;
-  slides[currentSlide].classList.add('active');
-  dots[currentSlide].classList.add('active');
+function actualizarMenuActivo() {
+  var alturaEncabezado = document.querySelector(".encabezado").offsetHeight;
+
+  for (var i = 0; i < secciones.length; i++) {
+    var seccion = secciones[i];
+    var rect = seccion.getBoundingClientRect();
+
+    if (rect.top <= alturaEncabezado + 10 && rect.bottom > alturaEncabezado + 10) {
+      var idSeccion = seccion.getAttribute("id");
+
+      for (var j = 0; j < enlacesMenu.length; j++) {
+        var enlace = enlacesMenu[j];
+        if (enlace.getAttribute("data-seccion") === idSeccion) {
+          enlace.classList.add("activo");
+        } else {
+          enlace.classList.remove("activo");
+        }
+      }
+    }
+  }
 }
 
-function siguienteSlide() {
-  irASlide((currentSlide + 1) % slides.length);
+if (enlacesMenu.length > 0 && secciones.length > 0) {
+  window.addEventListener("scroll", actualizarMenuActivo);
+  actualizarMenuActivo(); 
+}
+
+// CARRUSEL DE PORTADA
+var diapositivas = document.querySelectorAll(".portada-imagen");
+var puntosCarrusel = document.querySelectorAll(".portada-punto");
+var diapositivaActual = 0;
+var temporizadorCarrusel = null;
+
+function irADiapositiva(indice) {
+  diapositivas[diapositivaActual].classList.remove("activa");
+  puntosCarrusel[diapositivaActual].classList.remove("activo");
+
+  diapositivaActual = indice;
+
+  diapositivas[diapositivaActual].classList.add("activa");
+  puntosCarrusel[diapositivaActual].classList.add("activo");
+}
+
+function siguienteDiapositiva() {
+  var siguiente = diapositivaActual + 1;
+  if (siguiente >= diapositivas.length) {
+    siguiente = 0;
+  }
+  irADiapositiva(siguiente);
 }
 
 function iniciarCarrusel() {
-  clearInterval(carouselTimer);
-  carouselTimer = setInterval(siguienteSlide, 5000);
+  clearInterval(temporizadorCarrusel);
+  temporizadorCarrusel = setInterval(siguienteDiapositiva, 5000);
 }
 
-dots.forEach((dot) => {
-  dot.addEventListener('click', () => {
-    irASlide(Number(dot.dataset.slide));
+for (var i = 0; i < puntosCarrusel.length; i++) {
+  puntosCarrusel[i].addEventListener("click", function () {
+    var indice = Number(this.getAttribute("data-diapositiva"));
+    irADiapositiva(indice);
     iniciarCarrusel();
   });
-});
-
-if (slides.length) iniciarCarrusel();
-
-// ---------- Diagrama interactivo: mostrar definición al pasar el cursor ----------
-// El diagrama ahora vive en un archivo SVG aparte (assets/svg/elements.svg),
-// cargado con <object>. Por eso hay que esperar a que cargue y entrar a su
-// propio documento (contentDocument) para engancharle los eventos.
-const diagramObject = document.getElementById('circuitDiagram');
-const diagramDef = document.getElementById('diagram-def');
-
-function activarDiagrama() {
-  const svgDoc = diagramObject.contentDocument;
-  if (!svgDoc) return;
-
-  const nodes = svgDoc.querySelectorAll('.node');
-  nodes.forEach((node) => {
-    node.addEventListener('mouseenter', () => {
-      diagramDef.textContent = node.getAttribute('data-def');
-    });
-    node.addEventListener('mouseleave', () => {
-      diagramDef.textContent = 'Pasa el cursor sobre un nodo del diagrama para ver su definición aquí.';
-    });
-  });
 }
 
-if (diagramObject) {
-  // Si el SVG ya estaba cargado (caché) al correr el script, "load" no vuelve a disparar
-  if (diagramObject.contentDocument && diagramObject.contentDocument.readyState === 'complete') {
-    activarDiagrama();
-  } else {
-    diagramObject.addEventListener('load', activarDiagrama);
+if (diapositivas.length > 0) {
+  iniciarCarrusel();
+}
+
+// TARJETAS DE ELEMENTOS
+var listaElementos = [
+  {
+    nombre: "Emisor",
+    icono: "fa-solid fa-microphone-lines",
+    color: "carta-c1",
+    definicion: "Quien origina y codifica el mensaje. Puede ser una persona, una institucion o un sistema.",
+    ejemplo: "La profesora explicando la tarea."
+  },
+  {
+    nombre: "Mensaje",
+    icono: "fa-solid fa-envelope",
+    color: "carta-c2",
+    definicion: "El contenido de la informacion: ideas, datos o emociones que se quieren transmitir.",
+    ejemplo: '"La tarea es para el lunes".'
+  },
+  {
+    nombre: "Codigo",
+    icono: "fa-solid fa-key",
+    color: "carta-c3",
+    definicion: "El sistema de signos (idioma, gestos, simbolos) que emisor y receptor deben compartir.",
+    ejemplo: "El espanol hablado."
+  },
+  {
+    nombre: "Canal",
+    icono: "fa-solid fa-satellite-dish",
+    color: "carta-c4",
+    definicion: "El medio fisico por el que viaja el mensaje: aire, papel, cable, red.",
+    ejemplo: "El aire (voz) o una app como WhatsApp."
+  },
+  {
+    nombre: "Receptor",
+    icono: "fa-solid fa-headphones",
+    color: "carta-c5",
+    definicion: "Quien recibe y decodifica el mensaje.",
+    ejemplo: "Los estudiantes que escuchan."
+  },
+  {
+    nombre: "Ruido",
+    icono: "fa-solid fa-bolt",
+    color: "carta-c6",
+    definicion: "Cualquier interferencia que distorsiona o interrumpe el mensaje.",
+    ejemplo: "Una alarma sonando en el salon."
+  },
+  {
+    nombre: "Retroalimentacion",
+    icono: "fa-solid fa-arrows-rotate",
+    color: "carta-c7",
+    definicion: "La respuesta del receptor, que confirma si el mensaje llego y como fue entendido.",
+    ejemplo: "Un estudiante levanta la mano y pregunta."
+  },
+  {
+    nombre: "Contexto",
+    icono: "fa-solid fa-earth-americas",
+    color: "carta-c8",
+    definicion: "La situacion, lugar y momento en que ocurre la comunicacion, y que influye en su interpretacion.",
+    ejemplo: "Un salon de clase en la manana."
+  }
+];
+
+var contenedorCartas = document.getElementById("cartasElementos");
+
+function dibujarCartasElementos() {
+  if (!contenedorCartas) {
+    return;
+  }
+
+  contenedorCartas.innerHTML = "";
+
+  for (var i = 0; i < listaElementos.length; i++) {
+    var elemento = listaElementos[i];
+
+    var tarjeta = document.createElement("div");
+    tarjeta.className = "carta-elemento " + elemento.color;
+
+    tarjeta.innerHTML =
+      '<div class="cara-carta">' +
+        '<div class="icono-carta"><i class="' + elemento.icono + '"></i></div>' +
+        '<div class="nombre-carta">' + elemento.nombre + "</div>" +
+        '<div class="pista-carta">Pasa el mouse para descubrir &rarr;</div>' +
+      "</div>" +
+      '<div class="reverso-carta">' +
+        '<div class="titulo-reverso">' + elemento.nombre + "</div>" +
+        '<div class="definicion-carta">' + elemento.definicion + "</div>" +
+        '<div class="ejemplo-carta">' +
+          '<span class="etiqueta-ejemplo">Ejemplo</span>' +
+          elemento.ejemplo +
+        "</div>" +
+      "</div>";
+
+    tarjeta.addEventListener("mouseenter", function () {
+      this.classList.add("volteada");
+    });
+    tarjeta.addEventListener("mouseleave", function () {
+      this.classList.remove("volteada");
+    });
+
+    contenedorCartas.appendChild(tarjeta);
   }
 }
 
-// ---------- Modal genérico (compartido por los dos formularios) ----------
-const modalOverlay = document.getElementById('modalOverlay');
-const modalBox = document.getElementById('modalBox');
-const modalIcon = document.getElementById('modalIcon');
-const modalTitle = document.getElementById('modalTitle');
-const modalBody = document.getElementById('modalBody');
-const modalAction = document.getElementById('modalAction');
-const modalClose = document.getElementById('modalClose');
-let countdownTimer = null;
+// MODAL
+var fondoModal = document.getElementById("fondoModal");
+var cajaModal = document.getElementById("cajaModal");
+var iconoModal = document.getElementById("iconoModal");
+var tituloModal = document.getElementById("tituloModal");
+var cuerpoModal = document.getElementById("cuerpoModal");
+var botonAccionModal = document.getElementById("accionModal");
+var botonCerrarModal = document.getElementById("cerrarModal");
 
-function abrirModal({ tipo = 'default', icono = 'fa-solid fa-paper-plane', titulo, cuerpoHTML, textoBoton = 'Entendido', onAction = null }) {
-  modalBox.classList.remove('modal-success', 'modal-warning');
-  if (tipo === 'success') modalBox.classList.add('modal-success');
-  if (tipo === 'warning') modalBox.classList.add('modal-warning');
+var temporizadorCuentaRegresiva = null;
+var funcionAlCerrarModal = null;
 
-  modalIcon.innerHTML = `<i class="${icono}"></i>`;
-  modalTitle.textContent = titulo;
-  modalBody.innerHTML = cuerpoHTML;
-  modalAction.textContent = textoBoton;
-  modalAction.style.display = '';
-  modalClose.style.display = '';
+function abrirVentana(tipo, icono, titulo, cuerpoHtml, textoBoton, alCerrar) {
+  cajaModal.classList.remove("ventana-exito", "ventana-advertencia");
 
-  modalAction.onclick = () => {
-    cerrarModal();
-    if (onAction) onAction();
+  if (tipo === "exito") {
+    cajaModal.classList.add("ventana-exito");
+  }
+  if (tipo === "advertencia") {
+    cajaModal.classList.add("ventana-advertencia");
+  }
+
+  iconoModal.innerHTML = '<i class="' + icono + '"></i>';
+  tituloModal.textContent = titulo;
+  cuerpoModal.innerHTML = cuerpoHtml;
+  botonAccionModal.textContent = textoBoton;
+  botonAccionModal.style.display = "";
+  botonCerrarModal.style.display = "";
+
+  funcionAlCerrarModal = alCerrar || null;
+
+  fondoModal.classList.add("abierta");
+  document.body.style.overflow = "hidden";
+}
+
+function cerrarVentana() {
+  fondoModal.classList.remove("abierta");
+  document.body.style.overflow = "";
+
+  if (temporizadorCuentaRegresiva) {
+    clearInterval(temporizadorCuentaRegresiva);
+    temporizadorCuentaRegresiva = null;
+
+    var cuerpoQuizElemento = document.getElementById("cuerpoQuiz");
+    var botonIniciarQuiz = document.getElementById("iniciar-quiz");
+
+    if (cuerpoQuizElemento) {
+      cuerpoQuizElemento.classList.remove("oculto");
+    }
+    if (botonIniciarQuiz) {
+      botonIniciarQuiz.style.display = "none";
+    }
+
+    botonAccionModal.style.display = "";
+    botonCerrarModal.style.display = "";
+  }
+
+  if (funcionAlCerrarModal) {
+    funcionAlCerrarModal();
+    funcionAlCerrarModal = null;
+  }
+}
+
+if (botonAccionModal) {
+  botonAccionModal.addEventListener("click", cerrarVentana);
+}
+if (botonCerrarModal) {
+  botonCerrarModal.addEventListener("click", cerrarVentana);
+}
+if (fondoModal) {
+  fondoModal.addEventListener("click", function (evento) {
+    if (evento.target === fondoModal) {
+      cerrarVentana();
+    }
+  });
+}
+document.addEventListener("keydown", function (evento) {
+  if (evento.key === "Escape" && fondoModal.classList.contains("abierta")) {
+    cerrarVentana();
+  }
+});
+
+// VALIDACION FORMULARIOS
+var expresionSoloLetras = /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/;
+
+function mostrarError(campo, mensaje) {
+  campo.classList.remove("invalido");
+  void campo.offsetWidth;
+  campo.classList.add("invalido");
+
+  var elementoError = document.getElementById(campo.id + "-error");
+  if (elementoError) {
+    elementoError.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>' + mensaje;
+  }
+}
+
+function quitarError(campo) {
+  campo.classList.remove("invalido");
+  var elementoError = document.getElementById(campo.id + "-error");
+  if (elementoError) {
+    elementoError.innerHTML = "";
+  }
+}
+
+function validarCampoDeTexto(campo, minimoCaracteres, soloLetras, mensajeError) {
+  var valor = campo.value.trim();
+
+  if (valor.length < minimoCaracteres) {
+    mostrarError(campo, mensajeError);
+    return false;
+  }
+
+  if (soloLetras && !expresionSoloLetras.test(valor)) {
+    mostrarError(campo, "Solo se permiten letras, sin numeros ni simbolos.");
+    return false;
+  }
+
+  quitarError(campo);
+  return true;
+}
+
+// FORMULARIO 1
+var formularioSimulador = document.getElementById("formulario-simulador");
+var resultadoSimulador = document.getElementById("resultado-simulador");
+
+var campoEmisor = document.getElementById("emisor");
+var campoMensaje = document.getElementById("mensaje");
+var campoCodigo = document.getElementById("codigo");
+var campoCanal = document.getElementById("canal");
+var campoContexto = document.getElementById("contexto");
+var campoRuido = document.getElementById("ruido");
+var campoReceptor = document.getElementById("receptor");
+var campoRetroalimentacion = document.getElementById("retroalimentacion");
+
+var textosCanal = {
+  voz: "ondas sonoras en el aire",
+  whatsapp: "una red de datos movil",
+  carta: "papel entregado en mano",
+  videollamada: "una conexion de video en tiempo real"
+};
+var textosCodigo = {
+  espanol: "el espanol hablado",
+  senas: "la lengua de senas",
+  emojis: "emojis",
+  morse: "codigo Morse"
+};
+var textosContexto = {
+  salon: "el salon de clase",
+  recreo: "el recreo",
+  casa: "una videollamada desde casa",
+  reunion: "una reunion familiar"
+};
+
+function permitirSoloLetrasMientrasEscribe(campo) {
+  if (!campo) {
+    return;
+  }
+  campo.addEventListener("input", function () {
+    var valorLimpio = campo.value.replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ\s]/g, "");
+    if (valorLimpio !== campo.value) {
+      campo.value = valorLimpio;
+      mostrarError(campo, "Solo letras, sin numeros ni simbolos.");
+    }
+  });
+}
+permitirSoloLetrasMientrasEscribe(campoEmisor);
+permitirSoloLetrasMientrasEscribe(campoReceptor);
+
+function describirRuido(nivel) {
+  if (nivel < 20) {
+    return {
+      estado: "minimo",
+      efecto: "el mensaje llega practicamente intacto."
+    };
+  }
+  if (nivel < 60) {
+    return {
+      estado: "moderado",
+      efecto: "el receptor entiende la idea general, pero pierde algunos detalles."
+    };
+  }
+  return {
+    estado: "alto",
+    efecto: "el mensaje llega muy distorsionado y probablemente necesite repetirse."
   };
-
-  modalOverlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
 }
 
-function cerrarModal() {
-  modalOverlay.classList.remove('open');
-  document.body.style.overflow = '';
+function validarFormularioSimulador() {
+  var emisorValido = validarCampoDeTexto(campoEmisor, 2, true, "Escribe quien envia el mensaje (minimo 2 letras).");
+  var mensajeValido = validarCampoDeTexto(campoMensaje, 3, false, "Escribe un mensaje un poco mas largo (minimo 3 caracteres).");
+  var receptorValido = validarCampoDeTexto(campoReceptor, 2, true, "Escribe quien recibe el mensaje (minimo 2 letras).");
+  var retroalimentacionValida = validarCampoDeTexto(campoRetroalimentacion, 3, false, "Cuentanos brevemente como respondera el receptor.");
+  
+  return emisorValido && mensajeValido && receptorValido && retroalimentacionValida;
+}
 
-  // Si se cierra a mitad de la cuenta regresiva del quiz, no dejamos al niño trabado
-  if (countdownTimer) {
-    clearInterval(countdownTimer);
-    countdownTimer = null;
-    const quizBody = document.getElementById('quizBody');
-    const quizStartBtn = document.getElementById('quiz-start');
-    if (quizBody) quizBody.classList.remove('hidden');
-    if (quizStartBtn) quizStartBtn.style.display = 'none';
-    modalAction.style.display = '';
-    modalClose.style.display = '';
+// Mientras el usuario va corrigiendo, revalidamos en vivo
+var camposDelSimulador = [campoEmisor, campoMensaje, campoReceptor, campoRetroalimentacion];
+for (var i = 0; i < camposDelSimulador.length; i++) {
+  if (camposDelSimulador[i]) {
+    camposDelSimulador[i].addEventListener("input", function () {
+      if (this.classList.contains("invalido")) {
+        validarFormularioSimulador();
+      }
+    });
   }
 }
 
-modalClose.addEventListener('click', cerrarModal);
-modalOverlay.addEventListener('click', (e) => {
-  if (e.target === modalOverlay) cerrarModal();
-});
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && modalOverlay.classList.contains('open')) cerrarModal();
-});
+if (formularioSimulador) {
+  formularioSimulador.addEventListener("submit", function (evento) {
+    evento.preventDefault(); // evitamos que la pagina se recargue
 
-// ---------- Helpers de validación de campos ----------
-function marcarError(input, mensajeError) {
-  input.classList.remove('invalid');
-  void input.offsetWidth; // fuerza a reiniciar la animación si el error ya estaba marcado
-  input.classList.add('invalid');
-  const errorSpan = document.getElementById(`${input.id}-error`);
-  if (errorSpan) errorSpan.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i>${mensajeError}`;
-}
+    if (!validarFormularioSimulador()) {
+      return; // si algo esta mal, no seguimos
+    }
 
-function limpiarError(input) {
-  input.classList.remove('invalid');
-  const errorSpan = document.getElementById(`${input.id}-error`);
-  if (errorSpan) errorSpan.innerHTML = '';
-}
+    var emisor = campoEmisor.value.trim();
+    var mensaje = campoMensaje.value.trim();
+    var codigo = campoCodigo.value;
+    var canal = campoCanal.value;
+    var contexto = campoContexto.value;
+    var ruido = Number(campoRuido.value);
+    var receptor = campoReceptor.value.trim();
+    var retroalimentacion = campoRetroalimentacion.value.trim();
 
-// ---------- Simulador de circuito de comunicación ----------
-const simulatorForm = document.getElementById('simulator-form');
-const simulatorResult = document.getElementById('simulator-result');
-const emisorInput = document.getElementById('emisor');
-const mensajeInput = document.getElementById('mensaje');
-const receptorInput = document.getElementById('receptor');
-const retroalimentacionInput = document.getElementById('retroalimentacion');
+    var infoRuido = describirRuido(ruido);
 
-const SOLO_LETRAS = /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/;
+    // Si no encontramos el texto en el diccionario, usamos el valor tal cual
+    var textoCanal = textosCanal[canal];
+    if (!textoCanal) {
+      textoCanal = canal;
+    }
+    var textoCodigo = textosCodigo[codigo];
+    if (!textoCodigo) {
+      textoCodigo = codigo;
+    }
+    var textoContexto = textosContexto[contexto];
+    if (!textoContexto) {
+      textoContexto = contexto;
+    }
 
-const canalDescripciones = {
-  voz: 'ondas sonoras en el aire',
-  whatsapp: 'una red de datos móvil',
-  carta: 'papel entregado en mano',
-  videollamada: 'una conexión de video en tiempo real',
-};
-const codigoDescripciones = {
-  espanol: 'el español hablado',
-  senas: 'la lengua de señas',
-  emojis: 'emojis',
-  morse: 'código Morse',
-};
-const contextoDescripciones = {
-  salon: 'el salón de clase',
-  recreo: 'el recreo',
-  casa: 'una videollamada desde casa',
-  reunion: 'una reunión familiar',
-};
+    // Armamos el mensaje final concatenando texto (con el operador +)
+    var textoResultado =
+      "<strong>" + emisor + "</strong> envia el mensaje \"<em>" + mensaje + "</em>\" usando " +
+      textoCodigo + ", a traves de " + textoCanal + ", durante " + textoContexto + ". " +
+      "Con un ruido " + infoRuido.estado + " (" + ruido + "%), " + infoRuido.efecto + " " +
+      "Finalmente, <strong>" + receptor + "</strong> recibe la senal y responde: \"<em>" +
+      retroalimentacion + "</em>\".";
 
-function evaluarRuido(nivel) {
-  if (nivel < 20) return { estado: 'mínimo', efecto: 'el mensaje llega prácticamente intacto.' };
-  if (nivel < 60) return { estado: 'moderado', efecto: 'el receptor entiende la idea general, pero pierde algunos detalles.' };
-  return { estado: 'alto', efecto: 'el mensaje llega muy distorsionado y probablemente necesite repetirse.' };
-}
+    if (resultadoSimulador) {
+      resultadoSimulador.innerHTML = textoResultado;
+      // reiniciamos la animacion quitando y poniendo la clase
+      resultadoSimulador.classList.remove("resultado-animado");
+      void resultadoSimulador.offsetWidth;
+      resultadoSimulador.classList.add("resultado-animado");
+    }
+  });
 
-// Filtra en vivo: a estos campos solo se les permite escribir letras y espacios,
-// y avisa AL INSTANTE (no hasta que se envía el formulario) por qué se borró el caracter
-function permitirSoloLetras(input) {
-  input.addEventListener('input', () => {
-    const limpio = input.value.replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ\s]/g, '');
-    if (limpio !== input.value) {
-      input.value = limpio;
-      marcarError(input, 'Solo letras, sin números ni símbolos.');
+  formularioSimulador.addEventListener("reset", function () {
+    for (var i = 0; i < camposDelSimulador.length; i++) {
+      if (camposDelSimulador[i]) {
+        quitarError(camposDelSimulador[i]);
+      }
+    }
+    if (resultadoSimulador) {
+      resultadoSimulador.innerHTML = "";
     }
   });
 }
-permitirSoloLetras(emisorInput);
-permitirSoloLetras(receptorInput);
 
-function validarSimulador() {
-  let valido = true;
 
-  if (!SOLO_LETRAS.test(emisorInput.value.trim()) || emisorInput.value.trim().length < 2) {
-    marcarError(emisorInput, 'Solo letras, sin números ni símbolos (mínimo 2).');
-    valido = false;
-  } else {
-    limpiarError(emisorInput);
-  }
+// -----------------------------------------------------
+// 8) QUIZ: IDENTIFICA EL ELEMENTO
+// -----------------------------------------------------
 
-  if (mensajeInput.value.trim().length < 3) {
-    marcarError(mensajeInput, 'Escribe un mensaje un poco más largo.');
-    valido = false;
-  } else {
-    limpiarError(mensajeInput);
-  }
+var formularioQuiz = document.getElementById("formulario-quiz");
+var botonIniciarQuiz = document.getElementById("iniciar-quiz");
+var cuerpoQuiz = document.getElementById("cuerpoQuiz");
 
-  if (!SOLO_LETRAS.test(receptorInput.value.trim()) || receptorInput.value.trim().length < 2) {
-    marcarError(receptorInput, 'Solo letras, sin números ni símbolos (mínimo 2).');
-    valido = false;
-  } else {
-    limpiarError(receptorInput);
-  }
-
-  if (retroalimentacionInput.value.trim().length < 3) {
-    marcarError(retroalimentacionInput, 'Cuéntanos brevemente cómo respondería el receptor.');
-    valido = false;
-  } else {
-    limpiarError(retroalimentacionInput);
-  }
-
-  return valido;
-}
-
-// Validar en vivo mientras el niño escribe (una vez que ya intentó enviar)
-[emisorInput, mensajeInput, receptorInput, retroalimentacionInput].forEach((input) => {
-  input.addEventListener('input', () => {
-    if (input.classList.contains('invalid')) validarSimulador();
-  });
-});
-
-simulatorForm.addEventListener('submit', function (event) {
-  event.preventDefault();
-  if (!validarSimulador()) return;
-
-  const emisor = emisorInput.value.trim();
-  const mensaje = mensajeInput.value.trim();
-  const codigo = document.getElementById('codigo').value;
-  const canal = document.getElementById('canal').value;
-  const contexto = document.getElementById('contexto').value;
-  const ruido = Number(document.getElementById('ruido').value);
-  const receptor = receptorInput.value.trim();
-  const retro = retroalimentacionInput.value.trim();
-
-  const ruidoInfo = evaluarRuido(ruido);
-  const canalTexto = canalDescripciones[canal] ?? canal;
-  const codigoTexto = codigoDescripciones[codigo] ?? codigo;
-  const contextoTexto = contextoDescripciones[contexto] ?? contexto;
-
-  const resultadoHTML = `
-    <strong>${emisor}</strong> envía el mensaje "<em>${mensaje}</em>" usando ${codigoTexto},
-    a través de ${canalTexto}, durante ${contextoTexto}.
-    Con un ruido ${ruidoInfo.estado} (${ruido}%), ${ruidoInfo.efecto}
-    Finalmente, <strong>${receptor}</strong> recibe la señal y responde: "<em>${retro}</em>".
-  `.replace(/\s+/g, ' ').trim();
-
-  simulatorResult.innerHTML = resultadoHTML;
-  simulatorResult.classList.remove('result-pop');
-  void simulatorResult.offsetWidth; // reinicia la animación si se envía varias veces
-  simulatorResult.classList.add('result-pop');
-});
-
-simulatorForm.addEventListener('reset', () => {
-  [emisorInput, mensajeInput, receptorInput, retroalimentacionInput].forEach(limpiarError);
-  simulatorResult.innerHTML = '';
-});
-
-// ---------- Quiz: identifica el elemento ----------
-const quizForm = document.getElementById('quiz-form');
-const quizStartBtn = document.getElementById('quiz-start');
-const quizBody = document.getElementById('quizBody');
-
-const respuestasCorrectas = {
-  q1: 'ruido',
-  q2: 'codigo',
-  q3: 'retroalimentacion',
-  q4: 'canal',
-  q5: 'contexto',
-  q6: 'mensaje',
+// La respuesta correcta de cada pregunta
+var respuestasCorrectas = {
+  q1: "ruido",
+  q2: "codigo",
+  q3: "retroalimentacion",
+  q4: "canal",
+  q5: "contexto",
+  q6: "mensaje"
 };
 
-// Botón "Iniciar prueba": cuenta regresiva 3, 2, 1 dentro del modal, y luego revela el quiz
-quizStartBtn.addEventListener('click', () => {
-  const pasos = [
-    { texto: '3', icono: 'fa-solid fa-rocket' },
-    { texto: '2', icono: 'fa-solid fa-rocket' },
-    { texto: '1', icono: 'fa-solid fa-rocket' },
-    { texto: '¡Empieza!', icono: 'fa-solid fa-flag-checkered' },
-  ];
-  let i = 0;
+if (botonIniciarQuiz) {
+  botonIniciarQuiz.addEventListener("click", function () {
+    var pasosCuenta = [
+      { texto: "3", icono: "fa-solid fa-rocket" },
+      { texto: "2", icono: "fa-solid fa-rocket" },
+      { texto: "1", icono: "fa-solid fa-rocket" },
+      { texto: "Empieza!", icono: "fa-solid fa-flag-checkered" }
+    ];
+    var pasoActual = 0;
 
-  modalBox.classList.remove('modal-success', 'modal-warning');
-  modalTitle.textContent = '¿Listo para el reto?';
-  modalIcon.innerHTML = `<i class="${pasos[i].icono}"></i>`;
-  modalBody.innerHTML = `<span class="countdown-number">${pasos[i].texto}</span>`;
-  modalAction.style.display = 'none';
-  modalClose.style.display = 'none';
-  modalOverlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
+    cajaModal.classList.remove("ventana-exito", "ventana-advertencia");
+    tituloModal.textContent = "Listo para el reto?";
+    iconoModal.innerHTML = '<i class="' + pasosCuenta[pasoActual].icono + '"></i>';
+    cuerpoModal.innerHTML = '<span class="numero-cuenta">' + pasosCuenta[pasoActual].texto + "</span>";
+    botonAccionModal.style.display = "none";
+    botonCerrarModal.style.display = "none";
+    fondoModal.classList.add("abierta");
+    document.body.style.overflow = "hidden";
 
-  countdownTimer = setInterval(() => {
-    i += 1;
-    if (i < pasos.length) {
-      modalIcon.innerHTML = `<i class="${pasos[i].icono}"></i>`;
-      modalBody.innerHTML = `<span class="countdown-number">${pasos[i].texto}</span>`;
+    temporizadorCuentaRegresiva = setInterval(function () {
+      pasoActual = pasoActual + 1;
+
+      if (pasoActual < pasosCuenta.length) {
+        iconoModal.innerHTML = '<i class="' + pasosCuenta[pasoActual].icono + '"></i>';
+        cuerpoModal.innerHTML = '<span class="numero-cuenta">' + pasosCuenta[pasoActual].texto + "</span>";
+      } else {
+        clearInterval(temporizadorCuentaRegresiva);
+        temporizadorCuentaRegresiva = null;
+        cerrarVentana();
+
+        if (cuerpoQuiz) {
+          cuerpoQuiz.classList.remove("oculto");
+        }
+        botonIniciarQuiz.style.display = "none";
+      }
+    }, 700);
+  });
+}
+
+// Revisa que las 6 preguntas tengan una opcion seleccionada
+function validarQuizCompleto() {
+  var todoValido = true;
+  var nombresPreguntas = Object.keys(respuestasCorrectas);
+
+  for (var i = 0; i < nombresPreguntas.length; i++) {
+    var pregunta = nombresPreguntas[i];
+    var grupoOpciones = document.querySelector('.opciones-quiz[data-pregunta="' + pregunta + '"]');
+    var elementoError = document.getElementById(pregunta + "-error");
+    var opcionMarcada = document.querySelector('input[name="' + pregunta + '"]:checked');
+
+    if (!opcionMarcada) {
+      if (grupoOpciones) {
+        grupoOpciones.classList.add("invalido");
+      }
+      if (elementoError) {
+        elementoError.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>Selecciona una opcion.';
+      }
+      todoValido = false;
     } else {
-      clearInterval(countdownTimer);
-      countdownTimer = null;
-      cerrarModal();
-      quizBody.classList.remove('hidden');
-      quizStartBtn.style.display = 'none';
+      if (grupoOpciones) {
+        grupoOpciones.classList.remove("invalido");
+      }
+      if (elementoError) {
+        elementoError.innerHTML = "";
+      }
     }
-  }, 700);
-});
+  }
 
-function validarQuiz() {
-  let valido = true;
-
-  Object.keys(respuestasCorrectas).forEach((pregunta) => {
-    const grupo = document.querySelector(`.quiz-options[data-question="${pregunta}"]`);
-    const errorSpan = document.getElementById(`${pregunta}-error`);
-    const respondida = document.querySelector(`input[name="${pregunta}"]:checked`);
-
-    if (!respondida) {
-      grupo.classList.add('invalid');
-      if (errorSpan) errorSpan.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>Selecciona una opción.';
-      valido = false;
-    } else {
-      grupo.classList.remove('invalid');
-      if (errorSpan) errorSpan.innerHTML = '';
-    }
-  });
-
-  return valido;
+  return todoValido;
 }
 
-quizForm.addEventListener('submit', function (event) {
-  event.preventDefault();
-  if (!validarQuiz()) return;
+if (formularioQuiz) {
+  formularioQuiz.addEventListener("submit", function (evento) {
+    evento.preventDefault();
 
-  const formData = new FormData(quizForm);
-  let aciertos = 0;
-  const total = Object.keys(respuestasCorrectas).length;
-
-  Object.entries(respuestasCorrectas).forEach(([pregunta, correcta]) => {
-    const grupo = document.querySelector(`.quiz-options[data-question="${pregunta}"]`);
-    const errorSpan = document.getElementById(`${pregunta}-error`);
-    const seleccionada = formData.get(pregunta);
-    const esCorrecta = seleccionada === correcta;
-
-    grupo.classList.remove('correct', 'incorrect');
-    grupo.classList.add(esCorrecta ? 'correct' : 'incorrect');
-
-    if (errorSpan) {
-      errorSpan.className = esCorrecta ? 'field-error success' : 'field-error incorrect';
-      errorSpan.innerHTML = esCorrecta
-        ? '<i class="fa-solid fa-circle-check"></i> ¡Correcto!'
-        : `<i class="fa-solid fa-circle-xmark"></i> Esa no era. Revisa "${correcta}" en el diagrama.`;
+    if (!validarQuizCompleto()) {
+      return;
     }
 
-    if (esCorrecta) aciertos += 1;
+    var nombresPreguntas = Object.keys(respuestasCorrectas);
+    var aciertos = 0;
+    var totalPreguntas = nombresPreguntas.length;
+
+    for (var i = 0; i < nombresPreguntas.length; i++) {
+      var pregunta = nombresPreguntas[i];
+      var respuestaCorrecta = respuestasCorrectas[pregunta];
+
+      var grupoOpciones = document.querySelector('.opciones-quiz[data-pregunta="' + pregunta + '"]');
+      var elementoError = document.getElementById(pregunta + "-error");
+      var opcionMarcada = document.querySelector('input[name="' + pregunta + '"]:checked');
+      var valorMarcado = opcionMarcada.value;
+
+      var esCorrecta = (valorMarcado === respuestaCorrecta);
+
+      if (grupoOpciones) {
+        grupoOpciones.classList.remove("correcta", "incorrecta");
+        if (esCorrecta) {
+          grupoOpciones.classList.add("correcta");
+        } else {
+          grupoOpciones.classList.add("incorrecta");
+        }
+      }
+
+      if (elementoError) {
+        if (esCorrecta) {
+          elementoError.className = "error-campo acierto";
+          elementoError.innerHTML = '<i class="fa-solid fa-circle-check"></i> Correcto!';
+        } else {
+          elementoError.className = "error-campo fallo";
+          elementoError.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Esa no era. Revisa "' + respuestaCorrecta + '" en las cartas.';
+        }
+      }
+
+      if (esCorrecta) {
+        aciertos = aciertos + 1;
+      }
+    }
+
+    // Elegimos el mensaje final segun cuantas preguntas acerto
+    var tipoVentana = "";
+    var iconoVentana = "";
+    var tituloVentana = "";
+    var cuerpoVentana = "";
+
+    if (aciertos === totalPreguntas) {
+      tipoVentana = "exito";
+      iconoVentana = "fa-solid fa-star";
+      tituloVentana = "Perfecto!";
+      cuerpoVentana = "Acertaste <strong>" + aciertos + " de " + totalPreguntas + "</strong>. Dominas los elementos de la comunicacion. :)";
+    } else if (aciertos >= totalPreguntas / 2) {
+      tipoVentana = "advertencia";
+      iconoVentana = "fa-solid fa-face-smile";
+      tituloVentana = "Bien hecho!";
+      cuerpoVentana = "Acertaste <strong>" + aciertos + " de " + totalPreguntas + "</strong>. Mira en rojo cuales preguntas repasar.";
+    } else {
+      tipoVentana = "normal";
+      iconoVentana = "fa-solid fa-rotate";
+      tituloVentana = "Sigue practicando";
+      cuerpoVentana = "Acertaste <strong>" + aciertos + " de " + totalPreguntas + "</strong>. Mira en rojo cuales preguntas repasar, y revisa las cartas de \"Elementos\".";
+    }
+
+    abrirVentana(tipoVentana, iconoVentana, tituloVentana, cuerpoVentana, "Ver resultados", null);
+
+    // Agregamos (una sola vez) el boton para volver a intentar
+    var botonReintentar = document.getElementById("botonReintentar");
+    if (!botonReintentar) {
+      botonReintentar = document.createElement("button");
+      botonReintentar.id = "botonReintentar";
+      botonReintentar.className = "boton-principal accion-modal";
+      botonReintentar.style.marginTop = "10px";
+      botonReintentar.style.background = "var(--tinta)";
+      botonReintentar.textContent = "Volver a intentar";
+
+      botonReintentar.addEventListener("click", function () {
+        cerrarVentana();
+        formularioQuiz.reset();
+
+        var todosLosGrupos = document.querySelectorAll(".opciones-quiz");
+        for (var g = 0; g < todosLosGrupos.length; g++) {
+          todosLosGrupos[g].classList.remove("correcta", "incorrecta");
+        }
+
+        var todosLosErrores = document.querySelectorAll(".error-campo");
+        for (var e = 0; e < todosLosErrores.length; e++) {
+          todosLosErrores[e].innerHTML = "";
+          todosLosErrores[e].className = "error-campo";
+        }
+      });
+
+      cajaModal.appendChild(botonReintentar);
+    }
+    botonReintentar.style.display = "";
   });
 
-  let tipo, icono, titulo, cuerpo;
-  if (aciertos === total) {
-    tipo = 'success';
-    icono = 'fa-solid fa-star';
-    titulo = '¡Perfecto!';
-    cuerpo = `Acertaste <strong>${aciertos} de ${total}</strong>. Dominas los elementos de la comunicación. 🎉`;
-  } else if (aciertos >= total / 2) {
-    tipo = 'warning';
-    icono = 'fa-solid fa-face-smile';
-    titulo = '¡Bien hecho!';
-    cuerpo = `Acertaste <strong>${aciertos} de ${total}</strong>. Mira en rojo cuáles preguntas repasar.`;
-  } else {
-    tipo = 'default';
-    icono = 'fa-solid fa-rotate';
-    titulo = 'Sigue practicando';
-    cuerpo = `Acertaste <strong>${aciertos} de ${total}</strong>. Mira en rojo cuáles preguntas repasar, y revisa el diagrama de "Elementos".`;
+  formularioQuiz.addEventListener("reset", function () {
+    cuerpoQuiz.classList.add("oculto");
+    botonIniciarQuiz.style.display = "";
+
+    var todosLosGrupos = document.querySelectorAll(".opciones-quiz");
+    for (var g = 0; g < todosLosGrupos.length; g++) {
+      todosLosGrupos[g].classList.remove("correcta", "incorrecta");
+    }
+
+    var todosLosErrores = document.querySelectorAll(".error-campo");
+    for (var e = 0; e < todosLosErrores.length; e++) {
+      todosLosErrores[e].innerHTML = "";
+      todosLosErrores[e].className = "error-campo";
+    }
+  });
+}
+
+// Cuando el usuario cambia de opcion en una pregunta, quitamos las marcas
+var opcionesDeRadio = document.querySelectorAll('.opciones-quiz input[type="radio"]');
+for (var i = 0; i < opcionesDeRadio.length; i++) {
+  opcionesDeRadio[i].addEventListener("change", function () {
+    var grupo = this.closest(".opciones-quiz");
+    if (grupo) {
+      grupo.classList.remove("correcta", "incorrecta", "invalido");
+
+      var nombrePregunta = grupo.getAttribute("data-pregunta");
+      var elementoError = document.getElementById(nombrePregunta + "-error");
+      if (elementoError) {
+        elementoError.innerHTML = "";
+        elementoError.className = "error-campo";
+      }
+    }
+  });
+}
+
+
+// -----------------------------------------------------
+// 9) ANIMACIONES AL HACER SCROLL (mostrar elementos poco a poco)
+// -----------------------------------------------------
+
+function activarAnimacionesDeScroll() {
+  var selectoresParaRevelar = [
+    "#definicion .columna-texto",
+    "#definicion .columna-cita",
+    "#tipos .grilla-cartas",
+    "#fuentes .columna-video",
+    "#fuentes .columna-libro"
+  ];
+
+  for (var i = 0; i < selectoresParaRevelar.length; i++) {
+    var elementos = document.querySelectorAll(selectoresParaRevelar[i]);
+    for (var j = 0; j < elementos.length; j++) {
+      elementos[j].classList.add("revelar");
+    }
   }
 
-  abrirModal({
-    tipo,
-    icono,
-    titulo,
-    cuerpoHTML: cuerpo,
-    textoBoton: 'Intentar de nuevo',
-    onAction: () => quizForm.reset(),
-  });
-});
-
-// Si cambia una respuesta después de calificar, se le quita la marca de correcto/incorrecto
-document.querySelectorAll('.quiz-options input[type="radio"]').forEach((radio) => {
-  radio.addEventListener('change', () => {
-    const grupo = radio.closest('.quiz-options');
-    grupo.classList.remove('correct', 'incorrect', 'invalid');
-    const errorSpan = document.getElementById(`${grupo.dataset.question}-error`);
-    if (errorSpan) { errorSpan.innerHTML = ''; errorSpan.className = 'field-error'; }
-  });
-});
-
-quizForm.addEventListener('reset', () => {
-  document.querySelectorAll('.quiz-options').forEach((grupo) => grupo.classList.remove('invalid', 'correct', 'incorrect'));
-  document.querySelectorAll('.quiz-options + .field-error').forEach((span) => {
-    span.innerHTML = '';
-    span.className = 'field-error';
-  });
-});
-
-// ============================================================
-// ANIMACIONES: revelado progresivo al hacer scroll
-// No toca el HTML: agrega las clases por JS sobre selectores
-// que ya existen, así que nada de lo anterior se rompe.
-// ============================================================
-
-document.addEventListener('DOMContentLoaded', () => {
-  const revealSelectors = [
-    '#definicion .col-text',
-    '#definicion .col-quote',
-    '#elementos .diagram-wrap',
-    '#elementos .section-lead',
-    '#elementos .table-wrap',
-    '#fuentes .col-video',
-    '#fuentes .col-book',
+  var selectoresEscalonados = [
+    ".grilla-cartas",
+    ".fila-datos",
+    ".grilla-actividad",
+    ".pie-interior",
+    ".cita-etiquetas"
   ];
-  revealSelectors.forEach((selector) => {
-    document.querySelectorAll(selector).forEach((el) => el.classList.add('reveal'));
-  });
 
-  const staggerSelectors = [
-    '.cards-grid',
-    '.fact-row',
-    '.activity-grid',
-    '.footer-inner',
-    '.quote-tags',
-  ];
-  staggerSelectors.forEach((selector) => {
-    document.querySelectorAll(selector).forEach((el) => el.classList.add('reveal-stagger'));
-  });
-
-  const animatedEls = document.querySelectorAll('.reveal, .reveal-stagger');
-
-  if (animatedEls.length && 'IntersectionObserver' in window) {
-    const revealObserver = new IntersectionObserver(
-      (entries, obs) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            obs.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.15, rootMargin: '0px 0px -60px 0px' }
-    );
-    animatedEls.forEach((el) => revealObserver.observe(el));
-  } else {
-    animatedEls.forEach((el) => el.classList.add('is-visible'));
+  for (var i = 0; i < selectoresEscalonados.length; i++) {
+    var elementos2 = document.querySelectorAll(selectoresEscalonados[i]);
+    for (var j = 0; j < elementos2.length; j++) {
+      elementos2[j].classList.add("revelar-escalonado");
+    }
   }
+
+  var todosLosAnimados = document.querySelectorAll(".revelar, .revelar-escalonado");
+
+  function revisarSiEstanVisibles() {
+    for (var i = 0; i < todosLosAnimados.length; i++) {
+      var elemento = todosLosAnimados[i];
+      if (elemento.classList.contains("visible")) {
+        continue; // si ya esta visible, no hacemos nada
+      }
+
+      var rect = elemento.getBoundingClientRect();
+      var estaEnPantalla = rect.top < window.innerHeight - 60 && rect.bottom > 0;
+
+      if (estaEnPantalla) {
+        elemento.classList.add("visible");
+      }
+    }
+  }
+
+  window.addEventListener("scroll", revisarSiEstanVisibles);
+  revisarSiEstanVisibles(); // revisamos una vez al cargar la pagina
+}
+
+
+// -----------------------------------------------------
+// 10) CUANDO LA PAGINA TERMINA DE CARGAR
+// -----------------------------------------------------
+
+document.addEventListener("DOMContentLoaded", function () {
+  dibujarCartasElementos();
+  activarAnimacionesDeScroll();
 });

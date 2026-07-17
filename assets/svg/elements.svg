@@ -1,0 +1,95 @@
+<svg viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg" class="circuit-svg" role="img" aria-label="Diagrama del circuito de comunicación">
+  <style>
+    @import url('../fonts/fontawesome/css/all.min.css');
+    @import url('../../css/fonts.css');
+
+    :root {
+      --ink: #2B2140;
+      --coral: #FF6F59;
+      --sun: #FFC93C;
+      --sky: #4EA9E0;
+      --grass: #4CB963;
+      --plum: #7C5CBF;
+    }
+
+    #signal-path { fill: none; stroke: #8b7fb0; stroke-width: 2.5; stroke-dasharray: 1 8; stroke-linecap: round; }
+    .feedback-path { fill: none; stroke: var(--sun); stroke-width: 2; stroke-dasharray: 5 6; opacity: 0.85; }
+    .pulse { fill: var(--sun); }
+    .noise line { stroke: var(--coral); stroke-width: 3; stroke-linecap: round; }
+
+    .node circle { stroke: #fff; stroke-width: 3; cursor: pointer; transition: transform .2s; transform-origin: center; transform-box: fill-box; }
+    .node:nth-of-type(7n+1) circle { fill: var(--coral); }
+    .node:nth-of-type(7n+2) circle { fill: var(--sun); }
+    .node:nth-of-type(7n+3) circle { fill: var(--sky); }
+    .node:nth-of-type(7n+4) circle { fill: var(--grass); }
+    .node:nth-of-type(7n+5) circle { fill: var(--plum); }
+    .node:nth-of-type(7n+6) circle { fill: var(--coral); }
+    .node:nth-of-type(7n+7) circle { fill: var(--sky); }
+    .node:hover circle { transform: scale(1.12); }
+
+    .node text { fill: #fff; font-family: 'Fredoka', sans-serif; font-weight: 500; font-size: 12.5px; text-anchor: middle; pointer-events: none; }
+    .node text.text-small { font-size: 10.5px; }
+
+    .node-icon { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 17px; font-family: "Font Awesome 6 Free"; }
+    .node-icon-small { font-size: 14px; }
+  </style>
+
+  <path id="signal-path" d="M 90 160 L 300 160 L 420 90 L 580 90 L 700 160 L 810 160" />
+  <path class="feedback-path" d="M 810 200 C 600 280, 300 280, 90 200" marker-end="url(#arrow)" />
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="var(--sun)"></path>
+    </marker>
+  </defs>
+  <circle class="pulse" r="6" cx="90" cy="160">
+    <animateMotion dur="4s" repeatCount="indefinite" path="M 0 0 L 210 0 L 330 -70 L 490 -70 L 610 0 L 720 0" />
+  </circle>
+
+  <g class="noise" transform="translate(500,60)">
+    <line x1="0" y1="0" x2="14" y2="30"></line>
+    <line x1="14" y1="0" x2="0" y2="30"></line>
+    <line x1="24" y1="5" x2="38" y2="35"></line>
+    <line x1="38" y1="5" x2="24" y2="35"></line>
+  </g>
+
+  <g class="node" data-def="Quien origina y codifica el mensaje. Puede ser una persona, una institución o un sistema.">
+    <circle cx="90" cy="160" r="36"></circle>
+    <foreignObject x="72" y="123" width="36" height="36"><div xmlns="http://www.w3.org/1999/xhtml" class="node-icon"><i class="fa-solid fa-microphone-lines"></i></div></foreignObject>
+    <text x="90" y="178">Emisor</text>
+  </g>
+  <g class="node" data-def="El contenido de la información: ideas, datos o emociones que se quieren transmitir.">
+    <circle cx="300" cy="160" r="36"></circle>
+    <foreignObject x="282" y="123" width="36" height="36"><div xmlns="http://www.w3.org/1999/xhtml" class="node-icon"><i class="fa-solid fa-envelope"></i></div></foreignObject>
+    <text x="300" y="178">Mensaje</text>
+  </g>
+  <g class="node" data-def="El sistema de signos (idioma, gestos, símbolos) que emisor y receptor deben compartir para entenderse.">
+    <circle cx="420" cy="90" r="36"></circle>
+    <foreignObject x="402" y="53" width="36" height="36"><div xmlns="http://www.w3.org/1999/xhtml" class="node-icon"><i class="fa-solid fa-key"></i></div></foreignObject>
+    <text x="420" y="108">Código</text>
+  </g>
+  <g class="node" data-def="El medio físico por el que viaja el mensaje: aire, papel, cable, red.">
+    <circle cx="580" cy="90" r="36"></circle>
+    <foreignObject x="562" y="53" width="36" height="36"><div xmlns="http://www.w3.org/1999/xhtml" class="node-icon"><i class="fa-solid fa-satellite-dish"></i></div></foreignObject>
+    <text x="580" y="108">Canal</text>
+  </g>
+  <g class="node" data-def="Quien recibe y decodifica el mensaje.">
+    <circle cx="700" cy="160" r="36"></circle>
+    <foreignObject x="682" y="123" width="36" height="36"><div xmlns="http://www.w3.org/1999/xhtml" class="node-icon"><i class="fa-solid fa-headphones"></i></div></foreignObject>
+    <text x="700" y="178">Receptor</text>
+  </g>
+  <g class="node" data-def="Cualquier interferencia que distorsiona o interrumpe el mensaje.">
+    <circle cx="530" cy="60" r="26" class="node-small"></circle>
+    <foreignObject x="514" y="33" width="32" height="32"><div xmlns="http://www.w3.org/1999/xhtml" class="node-icon node-icon-small"><i class="fa-solid fa-bolt"></i></div></foreignObject>
+    <text x="530" y="72" class="text-small">Ruido</text>
+  </g>
+  <g class="node" data-def="La respuesta del receptor, que confirma si el mensaje llegó y cómo fue entendido.">
+    <circle cx="450" cy="250" r="32"></circle>
+    <foreignObject x="432" y="215" width="36" height="36"><div xmlns="http://www.w3.org/1999/xhtml" class="node-icon"><i class="fa-solid fa-arrows-rotate"></i></div></foreignObject>
+    <text x="450" y="262">Retroalimentación</text>
+  </g>
+  <g class="node" data-def="La situación, lugar y momento en que ocurre la comunicación, y que influye en su interpretación.">
+    <circle cx="810" cy="160" r="32"></circle>
+    <foreignObject x="792" y="123" width="36" height="36"><div xmlns="http://www.w3.org/1999/xhtml" class="node-icon"><i class="fa-solid fa-earth-americas"></i></div></foreignObject>
+    <text x="810" y="172" class="text-small">Contexto</text>
+  </g>
+</svg>

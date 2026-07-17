@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Endpoint · La Comunicación y sus Elementos</title>
+<link rel="icon" type="image/png" href="./assets/images/logo-removebg-preview.png">
+<link rel="stylesheet" href="./css/fonts.css">
+<link rel="stylesheet" href="./assets/fonts/fontawesome/css/all.min.css">
+<link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <span class="brand"><img class="brand-logo" src="./assets/images/logo-removebg-preview.png" alt="Endpoint">Endpoint</span>
+    <nav class="main-nav" aria-label="Navegación principal" id="mainNav">
+      <a href="#definicion" data-section="definicion"><i class="fa-solid fa-book-open"></i> Definición</a>
+      <a href="#elementos" data-section="elementos"><i class="fa-solid fa-diagram-project"></i> Elementos</a>
+      <a href="#tipos" data-section="tipos"><i class="fa-solid fa-layer-group"></i> Tipos</a>
+      <a href="#actividad" data-section="actividad"><i class="fa-solid fa-gamepad"></i> Actividad</a>
+      <a href="#fuentes" data-section="fuentes"><i class="fa-solid fa-link"></i> Fuentes</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-carousel" id="heroCarousel">
+      <img class="hero-slide active" src="./assets/images/hero-1.jpeg" alt="">
+      <img class="hero-slide" src="./assets/images/hero-2.jpeg" alt="">
+      <img class="hero-slide" src="./assets/images/hero-3.jpeg" alt="">
+      <img class="hero-slide" src="./assets/images/hero-4.jpeg" alt="">
+      <img class="hero-slide" src="./assets/images/hero-5.jpeg" alt="">
+      <div class="hero-carousel-overlay"></div>
+    </div>
+
+
+    <div class="hero-content">
+      <p class="eyebrow">Programación III · Proyecto final</p>
+      <h1>¡Descubre cómo viaja<br><span class="highlight highlight-coral">un mensaje</span>!</h1>
+      <p class="hero-sub">Del emisor al receptor, cada mensaje pasa por un camino lleno de piezas increíbles. <strong>¡Vamos a explorarlas juntos!</strong></p>
+      <a href="#definicion" class="scroll-cue">Empezar la aventura <i class="fa-solid fa-arrow-down"></i></a>
+      <div class="hero-dots" id="heroDots">
+        <button class="hero-dot active" data-slide="0" aria-label="Imagen 1"></button>
+        <button class="hero-dot" data-slide="1" aria-label="Imagen 2"></button>
+        <button class="hero-dot" data-slide="2" aria-label="Imagen 3"></button>
+        <button class="hero-dot" data-slide="3" aria-label="Imagen 4"></button>
+        <button class="hero-dot" data-slide="4" aria-label="Imagen 5"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEFINICIÓN -->
+  <section id="definicion" class="section section-paper">
+    <div class="section-inner two-col">
+      <div class="col-text">
+        <h2>¿Qué es comunicarse?</h2>
+        <p>Comunicarse es compartir una idea con alguien más. Para que funcione, necesitamos un <strong>emisor</strong> (quien habla), un <strong>mensaje</strong> (lo que dice), un <strong>código</strong> (el idioma o las señas que ambos entienden) y un <strong>canal</strong> (por dónde viaja: el aire, un papel, una pantalla) hasta llegar a un <strong>receptor</strong> (quien escucha).</p>
+        <p>Es como un juego de relevos: si un jugador tropieza —si no compartimos el mismo idioma, si hay demasiado ruido, si la señal se corta— el mensaje no llega completo, o no llega para nada.</p>
+
+        <div class="fact-row">
+          <div class="fact">
+            <span class="fact-icon fact-icon-coral"><i class="fa-solid fa-people-arrows"></i></span>
+            <div>
+              <strong>Es de doble vía</strong>
+              <p>Emisor y receptor cambian de rol todo el tiempo.</p>
+            </div>
+          </div>
+          <div class="fact">
+            <span class="fact-icon fact-icon-sun"><i class="fa-solid fa-face-smile"></i></span>
+            <div>
+              <strong>No siempre usa palabras</strong>
+              <p>Un gesto o un silencio también comunican.</p>
+            </div>
+          </div>
+          <div class="fact">
+            <span class="fact-icon fact-icon-sky"><i class="fa-solid fa-map-location-dot"></i></span>
+            <div>
+              <strong>Depende del contexto</strong>
+              <p>El mismo mensaje cambia de sentido según dónde se diga.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <aside class="col-quote">
+        <figure class="def-figure">
+          <img src="./assets/images/definicion.jpeg" alt="Ilustración de dos niños comunicándose">
+        </figure>
+        <blockquote>
+          «¡No podemos dejar de comunicarnos! Hasta el silencio dice algo.»
+          <cite>Basado en Paul Watzlawick, teórico de la comunicación</cite>
+        </blockquote>
+        <div class="quote-tags">
+          <span class="tag tag-coral">Doble vía</span>
+          <span class="tag tag-sun">No verbal</span>
+          <span class="tag tag-sky">Contexto</span>
+          <span class="tag tag-grass">Código compartido</span>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ELEMENTOS -->
+  <section id="elementos" class="section section-ink">
+    <div class="section-inner">
+      <h2 class="light">Los ocho elementos del circuito</h2>
+      <p class="section-lead light">Pasa el cursor sobre cada nodo para ver su función dentro del proceso.</p>
+
+      <div class="diagram-wrap">
+        <object id="circuitDiagram" class="circuit-svg" type="image/svg+xml" data="./assets/svg/elements.svg" aria-label="Diagrama del circuito de comunicación">
+          Tu navegador no puede mostrar este diagrama SVG.
+        </object>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIPOS -->
+  <section id="tipos" class="section section-paper">
+    <div class="section-inner">
+      <h2>Tipos de comunicación</h2>
+      <div class="cards-grid">
+        <article class="card card-coral">
+          <span class="card-icon-badge"><i class="fa-solid fa-comments"></i></span>
+          <img class="card-img" src="./assets/images/tipo-oral.jpeg" alt="Comunicación verbal oral">
+          <h3>Verbal oral</h3>
+          <p>Se transmite mediante la palabra hablada: conversaciones, llamadas, exposiciones.</p>
+          <a class="card-btn" href="https://concepto.de/comunicacion-verbal/" target="_blank" rel="noopener">Más información →</a>
+        </article>
+        <article class="card card-sun">
+          <span class="card-icon-badge"><i class="fa-solid fa-pen-fancy"></i></span>
+          <img class="card-img" src="./assets/images/tipo-escrita.jpeg" alt="Comunicación verbal escrita">
+          <h3>Verbal escrita</h3>
+          <p>Usa el código lingüístico en forma de texto: cartas, mensajes, libros, correos.</p>
+          <a class="card-btn" href="https://concepto.de/comunicacion-verbal/" target="_blank" rel="noopener">Más información →</a>
+        </article>
+        <article class="card card-sky">
+          <span class="card-icon-badge"><i class="fa-solid fa-hand"></i></span>
+          <img class="card-img" src="./assets/images/tipo-noverbal.jpeg" alt="Comunicación no verbal">
+          <h3>No verbal</h3>
+          <p>Gestos, postura, tono de voz y expresiones que acompañan o reemplazan a la palabra.</p>
+          <a class="card-btn" href="https://es.wikipedia.org/wiki/Comunicaci%C3%B3n_no_verbal" target="_blank" rel="noopener">Más información →</a>
+        </article>
+        <article class="card card-grass">
+          <span class="card-icon-badge"><i class="fa-solid fa-laptop"></i></span>
+          <img class="card-img" src="./assets/images/tipo-digital.jpeg" alt="Comunicación digital">
+          <h3>Digital</h3>
+          <p>Ocurre a través de canales tecnológicos: redes sociales, chats, videollamadas.</p>
+          <a class="card-btn" href="https://definicion.de/comunicacion-digital/" target="_blank" rel="noopener">Más información →</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACTIVIDAD / FORMULARIO -->
+  <section id="actividad" class="section section-ink">
+    <div class="section-inner">
+      <h2 class="light">Actividad práctica</h2>
+      <p class="section-lead light">Arma tu propio circuito de comunicación y pon a prueba lo que aprendiste.</p>
+
+      <div class="activity-grid">
+
+        <!-- Simulador -->
+        <form class="panel" id="simulator-form" novalidate>
+          <h3>Simulador de circuito</h3>
+
+          <label for="emisor">Emisor</label>
+          <input type="text" id="emisor" placeholder="Ej: la profesora" required>
+          <span class="field-error" id="emisor-error"></span>
+
+          <label for="mensaje">Mensaje</label>
+          <input type="text" id="mensaje" placeholder="Ej: la tarea es para el lunes" minlength="3" required>
+          <span class="field-error" id="mensaje-error"></span>
+
+          <label for="codigo">Código</label>
+          <select id="codigo">
+            <option value="espanol">Español hablado</option>
+            <option value="senas">Lengua de señas</option>
+            <option value="emojis">Emojis</option>
+            <option value="morse">Código Morse</option>
+          </select>
+
+          <label for="canal">Canal</label>
+          <select id="canal">
+            <option value="voz">Voz (aire)</option>
+            <option value="whatsapp">WhatsApp</option>
+            <option value="carta">Carta escrita</option>
+            <option value="videollamada">Videollamada</option>
+          </select>
+
+          <label for="contexto">Contexto</label>
+          <select id="contexto">
+            <option value="salon">En el salón de clase</option>
+            <option value="recreo">En el recreo</option>
+            <option value="casa">En videollamada desde casa</option>
+            <option value="reunion">En una reunión familiar</option>
+          </select>
+
+          <label for="ruido">Nivel de ruido</label>
+          <input type="range" id="ruido" min="0" max="100" value="10">
+
+          <label for="receptor">Receptor</label>
+          <input type="text" id="receptor" placeholder="Ej: los estudiantes" required>
+          <span class="field-error" id="receptor-error"></span>
+
+          <label for="retroalimentacion">Retroalimentación</label>
+          <input type="text" id="retroalimentacion" placeholder="Ej: responde que sí entendió" minlength="3" required>
+          <span class="field-error" id="retroalimentacion-error"></span>
+
+          <div class="form-btn-row">
+            <button type="submit" class="btn-primary">Enviar mensaje</button>
+            <button type="reset" class="btn-clear" id="simulator-clear"><i class="fa-solid fa-broom"></i> Limpiar</button>
+          </div>
+          <p class="result" id="simulator-result" aria-live="polite"></p>
+        </form>
+
+        <!-- Quiz -->
+        <form class="panel" id="quiz-form" novalidate>
+          <h3>Identifica el elemento</h3>
+
+          <button type="button" class="btn-primary" id="quiz-start">
+            <i class="fa-solid fa-play"></i> Iniciar prueba
+          </button>
+
+          <div class="quiz-body hidden" id="quizBody">
+
+            <p class="quiz-question">"El teléfono se corta y solo se escuchan cortes en la voz de tu amigo." ¿Qué elemento está fallando?</p>
+            <div class="quiz-options" role="radiogroup" data-question="q1">
+              <label><input type="radio" name="q1" value="canal"> Canal</label>
+              <label><input type="radio" name="q1" value="ruido"> Ruido</label>
+              <label><input type="radio" name="q1" value="codigo"> Código</label>
+            </div>
+            <span class="field-error" id="q1-error"></span>
+
+            <p class="quiz-question">"Le escribes en francés a alguien que solo habla español." ¿Qué elemento falla?</p>
+            <div class="quiz-options" role="radiogroup" data-question="q2">
+              <label><input type="radio" name="q2" value="codigo"> Código</label>
+              <label><input type="radio" name="q2" value="contexto"> Contexto</label>
+              <label><input type="radio" name="q2" value="emisor"> Emisor</label>
+            </div>
+            <span class="field-error" id="q2-error"></span>
+
+            <p class="quiz-question">"Al final de una charla, el público aplaude." ¿Qué elemento representa esto?</p>
+            <div class="quiz-options" role="radiogroup" data-question="q3">
+              <label><input type="radio" name="q3" value="retroalimentacion"> Retroalimentación</label>
+              <label><input type="radio" name="q3" value="mensaje"> Mensaje</label>
+              <label><input type="radio" name="q3" value="canal"> Canal</label>
+            </div>
+            <span class="field-error" id="q3-error"></span>
+
+            <p class="quiz-question">"Prefieres escribir una carta en vez de llamar por teléfono." ¿Qué elemento cambia?</p>
+            <div class="quiz-options" role="radiogroup" data-question="q4">
+              <label><input type="radio" name="q4" value="canal"> Canal</label>
+              <label><input type="radio" name="q4" value="mensaje"> Mensaje</label>
+              <label><input type="radio" name="q4" value="emisor"> Emisor</label>
+            </div>
+            <span class="field-error" id="q4-error"></span>
+
+            <p class="quiz-question">"Cuentas el mismo chiste en una fiesta (y ríen) y en un funeral (e incomoda)." ¿Qué elemento hace la diferencia?</p>
+            <div class="quiz-options" role="radiogroup" data-question="q5">
+              <label><input type="radio" name="q5" value="contexto"> Contexto</label>
+              <label><input type="radio" name="q5" value="codigo"> Código</label>
+              <label><input type="radio" name="q5" value="ruido"> Ruido</label>
+            </div>
+            <span class="field-error" id="q5-error"></span>
+
+            <p class="quiz-question">"Un amigo te avisa que llegará tarde." Esa información específica es el...</p>
+            <div class="quiz-options" role="radiogroup" data-question="q6">
+              <label><input type="radio" name="q6" value="mensaje"> Mensaje</label>
+              <label><input type="radio" name="q6" value="canal"> Canal</label>
+              <label><input type="radio" name="q6" value="emisor"> Emisor</label>
+            </div>
+            <span class="field-error" id="q6-error"></span>
+
+            <div class="form-btn-row">
+              <button type="submit" class="btn-primary">Calificar</button>
+              <button type="reset" class="btn-clear" id="quiz-clear"><i class="fa-solid fa-broom"></i> Limpiar</button>
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL (compartido por ambos formularios) -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box" id="modalBox" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="Cerrar">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="modal-icon" id="modalIcon"><i class="fa-solid fa-paper-plane"></i></div>
+      <h3 id="modalTitle">Título</h3>
+      <div class="modal-body" id="modalBody">Contenido</div>
+      <button class="btn-primary modal-action" id="modalAction">Entendido</button>
+    </div>
+  </div>
+
+  <!-- FUENTES / ENLACES -->
+  <section id="fuentes" class="section section-paper">
+    <div class="section-inner">
+      <h2>Fuentes y para seguir explorando</h2>
+      <p class="section-lead">Mira el video resumen y hojea los documentos de apoyo.</p>
+
+      <div class="fuentes-grid">
+        <div class="col-video">
+          <div class="video-wrap">
+            <video controls poster="./assets/images/portada-video.jpeg">
+              <source src="./assets/videos/video_comunicacion.mp4" type="video/mp4">
+              Tu navegador no puede reproducir este video.
+            </video>
+          </div>
+          <ul class="link-list">
+            <li><a href="https://dle.rae.es/comunicaci%C3%B3n" target="_blank" rel="noopener">Real Academia Española — definición de "comunicación" ↗</a></li>
+            <li><a href="https://es.wikipedia.org/wiki/Comunicaci%C3%B3n" target="_blank" rel="noopener">Wikipedia — artículo sobre comunicación ↗</a></li>
+          </ul>
+        </div>
+
+        <div class="col-book">
+          <div class="book">
+            <div class="book-spine"></div>
+            <div class="book-pages">
+              <iframe id="pdfViewer" src="./assets/pdf/pdfcomunicacion.pdf" title="Visor de documento PDF"></iframe>
+            </div>
+          </div>
+          <div class="book-tabs">
+            <button class="book-tab active" data-pdf="./assets/pdf/pdfcomunicacion.pdf"><i class="fa-solid fa-bookmark"></i> Documento</button>
+            <button class="book-tab" data-pdf="./assets/pdf/practica.pdf"><i class="fa-solid fa-bookmark"></i> Práctica</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-col footer-brand">
+      <span class="brand"><img class="brand-logo" src="./assets/images/logo-removebg-preview.png" alt="Endpoint">Endpoint</span>
+      <p>Un recorrido interactivo por la comunicación y sus elementos, hecho como proyecto final de Programación III.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Navegación</h4>
+      <ul class="footer-links">
+        <li><a href="#definicion">Definición</a></li>
+        <li><a href="#elementos">Elementos</a></li>
+        <li><a href="#tipos">Tipos</a></li>
+        <li><a href="#actividad">Actividad</a></li>
+        <li><a href="#fuentes">Fuentes</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Fuentes</h4>
+      <ul class="footer-links">
+        <li><a href="https://dle.rae.es/comunicaci%C3%B3n" target="_blank" rel="noopener">RAE ↗</a></li>
+        <li><a href="https://es.wikipedia.org/wiki/Comunicaci%C3%B3n" target="_blank" rel="noopener">Wikipedia ↗</a></li>
+        <li><a href="https://es.wikipedia.org/wiki/Comunicaci%C3%B3n_no_verbal" target="_blank" rel="noopener">Comunicación no verbal ↗</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Hecho con</h4>
+      <div class="tech-badges">
+        <span class="tech-badge"><i class="fa-brands fa-html5"></i> HTML5</span>
+        <span class="tech-badge"><i class="fa-brands fa-css3-alt"></i> CSS3</span>
+        <span class="tech-badge"><i class="fa-brands fa-js"></i> JavaScript</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>Proyecto final · Programación III · Elaboración de página web con HTML, CSS y JavaScript</p>
+    <p class="credits">Íconos por <a href="https://fontawesome.com" target="_blank" rel="noopener">Font Awesome</a></p>
+  </div>
+</footer>
+
+<script src="./js/script.js"></script>
+</body>
+</html>

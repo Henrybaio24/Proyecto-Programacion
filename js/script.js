@@ -1,4 +1,4 @@
-// 1) VISOR DE PDF 
+// VISOR DE PDF
 var visorPdf = document.getElementById("visorPdf");
 var botonesPestana = document.querySelectorAll(".pestana-libro");
 
@@ -15,7 +15,7 @@ for (var i = 0; i < botonesPestana.length; i++) {
   });
 }
 
-// MENU DE NAVEGACION
+// MENU DE NAVEGACION 
 var enlacesMenu = document.querySelectorAll("#menuPrincipal a[data-seccion]");
 var secciones = document.querySelectorAll("main section[id]");
 
@@ -43,7 +43,7 @@ function actualizarMenuActivo() {
 
 if (enlacesMenu.length > 0 && secciones.length > 0) {
   window.addEventListener("scroll", actualizarMenuActivo);
-  actualizarMenuActivo(); 
+  actualizarMenuActivo();
 }
 
 // CARRUSEL DE PORTADA
@@ -87,7 +87,7 @@ if (diapositivas.length > 0) {
   iniciarCarrusel();
 }
 
-// TARJETAS DE ELEMENTOS
+// TARJETAS DE ELEMENTOS 
 var listaElementos = [
   {
     nombre: "Emisor",
@@ -166,7 +166,7 @@ function dibujarCartasElementos() {
       '<div class="cara-carta">' +
         '<div class="icono-carta"><i class="' + elemento.icono + '"></i></div>' +
         '<div class="nombre-carta">' + elemento.nombre + "</div>" +
-        '<div class="pista-carta">Pasa el mouse para descubrir &rarr;</div>' +
+        '<div class="pista-carta">Pasa el mouse para descubrir</div>' +
       "</div>" +
       '<div class="reverso-carta">' +
         '<div class="titulo-reverso">' + elemento.nombre + "</div>" +
@@ -188,7 +188,7 @@ function dibujarCartasElementos() {
   }
 }
 
-// MODAL
+// MODAL 
 var fondoModal = document.getElementById("fondoModal");
 var cajaModal = document.getElementById("cajaModal");
 var iconoModal = document.getElementById("iconoModal");
@@ -196,6 +196,8 @@ var tituloModal = document.getElementById("tituloModal");
 var cuerpoModal = document.getElementById("cuerpoModal");
 var botonAccionModal = document.getElementById("accionModal");
 var botonCerrarModal = document.getElementById("cerrarModal");
+var cuerpoQuiz = document.getElementById("cuerpoQuiz");
+var botonIniciarQuiz = document.getElementById("iniciar-quiz");
 
 var temporizadorCuentaRegresiva = null;
 var funcionAlCerrarModal = null;
@@ -231,11 +233,8 @@ function cerrarVentana() {
     clearInterval(temporizadorCuentaRegresiva);
     temporizadorCuentaRegresiva = null;
 
-    var cuerpoQuizElemento = document.getElementById("cuerpoQuiz");
-    var botonIniciarQuiz = document.getElementById("iniciar-quiz");
-
-    if (cuerpoQuizElemento) {
-      cuerpoQuizElemento.classList.remove("oculto");
+    if (cuerpoQuiz) {
+      cuerpoQuiz.classList.remove("oculto");
     }
     if (botonIniciarQuiz) {
       botonIniciarQuiz.style.display = "none";
@@ -270,7 +269,7 @@ document.addEventListener("keydown", function (evento) {
   }
 });
 
-// VALIDACION FORMULARIOS
+// VALIDACION DE FORMULARIOS 
 var expresionSoloLetras = /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/;
 
 function mostrarError(campo, mensaje) {
@@ -309,7 +308,7 @@ function validarCampoDeTexto(campo, minimoCaracteres, soloLetras, mensajeError) 
   return true;
 }
 
-// FORMULARIO 1
+// FORMULARIO SIMULADOR 
 var formularioSimulador = document.getElementById("formulario-simulador");
 var resultadoSimulador = document.getElementById("resultado-simulador");
 
@@ -380,11 +379,10 @@ function validarFormularioSimulador() {
   var mensajeValido = validarCampoDeTexto(campoMensaje, 3, false, "Escribe un mensaje un poco mas largo (minimo 3 caracteres).");
   var receptorValido = validarCampoDeTexto(campoReceptor, 2, true, "Escribe quien recibe el mensaje (minimo 2 letras).");
   var retroalimentacionValida = validarCampoDeTexto(campoRetroalimentacion, 3, false, "Cuentanos brevemente como respondera el receptor.");
-  
+
   return emisorValido && mensajeValido && receptorValido && retroalimentacionValida;
 }
 
-// Mientras el usuario va corrigiendo, revalidamos en vivo
 var camposDelSimulador = [campoEmisor, campoMensaje, campoReceptor, campoRetroalimentacion];
 for (var i = 0; i < camposDelSimulador.length; i++) {
   if (camposDelSimulador[i]) {
@@ -398,10 +396,10 @@ for (var i = 0; i < camposDelSimulador.length; i++) {
 
 if (formularioSimulador) {
   formularioSimulador.addEventListener("submit", function (evento) {
-    evento.preventDefault(); // evitamos que la pagina se recargue
+    evento.preventDefault();
 
     if (!validarFormularioSimulador()) {
-      return; // si algo esta mal, no seguimos
+      return;
     }
 
     var emisor = campoEmisor.value.trim();
@@ -414,8 +412,6 @@ if (formularioSimulador) {
     var retroalimentacion = campoRetroalimentacion.value.trim();
 
     var infoRuido = describirRuido(ruido);
-
-    // Si no encontramos el texto en el diccionario, usamos el valor tal cual
     var textoCanal = textosCanal[canal];
     if (!textoCanal) {
       textoCanal = canal;
@@ -429,7 +425,6 @@ if (formularioSimulador) {
       textoContexto = contexto;
     }
 
-    // Armamos el mensaje final concatenando texto (con el operador +)
     var textoResultado =
       "<strong>" + emisor + "</strong> envia el mensaje \"<em>" + mensaje + "</em>\" usando " +
       textoCodigo + ", a traves de " + textoCanal + ", durante " + textoContexto + ". " +
@@ -439,7 +434,6 @@ if (formularioSimulador) {
 
     if (resultadoSimulador) {
       resultadoSimulador.innerHTML = textoResultado;
-      // reiniciamos la animacion quitando y poniendo la clase
       resultadoSimulador.classList.remove("resultado-animado");
       void resultadoSimulador.offsetWidth;
       resultadoSimulador.classList.add("resultado-animado");
@@ -458,16 +452,9 @@ if (formularioSimulador) {
   });
 }
 
-
-// -----------------------------------------------------
-// 8) QUIZ: IDENTIFICA EL ELEMENTO
-// -----------------------------------------------------
-
+// FORMULARIO QUIZ
 var formularioQuiz = document.getElementById("formulario-quiz");
-var botonIniciarQuiz = document.getElementById("iniciar-quiz");
-var cuerpoQuiz = document.getElementById("cuerpoQuiz");
 
-// La respuesta correcta de cada pregunta
 var respuestasCorrectas = {
   q1: "ruido",
   q2: "codigo",
@@ -476,6 +463,19 @@ var respuestasCorrectas = {
   q5: "contexto",
   q6: "mensaje"
 };
+
+function limpiarVisualesQuiz() {
+  var todosLosGrupos = document.querySelectorAll(".opciones-quiz");
+  for (var g = 0; g < todosLosGrupos.length; g++) {
+    todosLosGrupos[g].classList.remove("correcta", "incorrecta");
+  }
+
+  var todosLosErrores = document.querySelectorAll(".error-campo");
+  for (var e = 0; e < todosLosErrores.length; e++) {
+    todosLosErrores[e].innerHTML = "";
+    todosLosErrores[e].className = "error-campo";
+  }
+}
 
 if (botonIniciarQuiz) {
   botonIniciarQuiz.addEventListener("click", function () {
@@ -516,7 +516,6 @@ if (botonIniciarQuiz) {
   });
 }
 
-// Revisa que las 6 preguntas tengan una opcion seleccionada
 function validarQuizCompleto() {
   var todoValido = true;
   var nombresPreguntas = Object.keys(respuestasCorrectas);
@@ -595,7 +594,6 @@ if (formularioQuiz) {
       }
     }
 
-    // Elegimos el mensaje final segun cuantas preguntas acerto
     var tipoVentana = "";
     var iconoVentana = "";
     var tituloVentana = "";
@@ -620,7 +618,6 @@ if (formularioQuiz) {
 
     abrirVentana(tipoVentana, iconoVentana, tituloVentana, cuerpoVentana, "Ver resultados", null);
 
-    // Agregamos (una sola vez) el boton para volver a intentar
     var botonReintentar = document.getElementById("botonReintentar");
     if (!botonReintentar) {
       botonReintentar = document.createElement("button");
@@ -633,17 +630,7 @@ if (formularioQuiz) {
       botonReintentar.addEventListener("click", function () {
         cerrarVentana();
         formularioQuiz.reset();
-
-        var todosLosGrupos = document.querySelectorAll(".opciones-quiz");
-        for (var g = 0; g < todosLosGrupos.length; g++) {
-          todosLosGrupos[g].classList.remove("correcta", "incorrecta");
-        }
-
-        var todosLosErrores = document.querySelectorAll(".error-campo");
-        for (var e = 0; e < todosLosErrores.length; e++) {
-          todosLosErrores[e].innerHTML = "";
-          todosLosErrores[e].className = "error-campo";
-        }
+        limpiarVisualesQuiz();
       });
 
       cajaModal.appendChild(botonReintentar);
@@ -654,21 +641,10 @@ if (formularioQuiz) {
   formularioQuiz.addEventListener("reset", function () {
     cuerpoQuiz.classList.add("oculto");
     botonIniciarQuiz.style.display = "";
-
-    var todosLosGrupos = document.querySelectorAll(".opciones-quiz");
-    for (var g = 0; g < todosLosGrupos.length; g++) {
-      todosLosGrupos[g].classList.remove("correcta", "incorrecta");
-    }
-
-    var todosLosErrores = document.querySelectorAll(".error-campo");
-    for (var e = 0; e < todosLosErrores.length; e++) {
-      todosLosErrores[e].innerHTML = "";
-      todosLosErrores[e].className = "error-campo";
-    }
+    limpiarVisualesQuiz();
   });
 }
 
-// Cuando el usuario cambia de opcion en una pregunta, quitamos las marcas
 var opcionesDeRadio = document.querySelectorAll('.opciones-quiz input[type="radio"]');
 for (var i = 0; i < opcionesDeRadio.length; i++) {
   opcionesDeRadio[i].addEventListener("change", function () {
@@ -686,11 +662,7 @@ for (var i = 0; i < opcionesDeRadio.length; i++) {
   });
 }
 
-
-// -----------------------------------------------------
-// 9) ANIMACIONES AL HACER SCROLL (mostrar elementos poco a poco)
-// -----------------------------------------------------
-
+// ANIMACIONES 
 function activarAnimacionesDeScroll() {
   var selectoresParaRevelar = [
     "#definicion .columna-texto",
@@ -728,7 +700,7 @@ function activarAnimacionesDeScroll() {
     for (var i = 0; i < todosLosAnimados.length; i++) {
       var elemento = todosLosAnimados[i];
       if (elemento.classList.contains("visible")) {
-        continue; // si ya esta visible, no hacemos nada
+        continue;
       }
 
       var rect = elemento.getBoundingClientRect();
@@ -741,13 +713,8 @@ function activarAnimacionesDeScroll() {
   }
 
   window.addEventListener("scroll", revisarSiEstanVisibles);
-  revisarSiEstanVisibles(); // revisamos una vez al cargar la pagina
+  revisarSiEstanVisibles();
 }
-
-
-// -----------------------------------------------------
-// 10) CUANDO LA PAGINA TERMINA DE CARGAR
-// -----------------------------------------------------
 
 document.addEventListener("DOMContentLoaded", function () {
   dibujarCartasElementos();
